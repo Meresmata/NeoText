@@ -179,108 +179,108 @@ def getpixel(letter, in_offset):
         elif letter == "0":
             in_offset += 5
             rtuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 5, 0, 6, 1, 0, 1, 6, 2, 0, 2, 6, 3, 0, 3, 1, 3, 2, 3, 3, 3, 4, 3, 5, 3, 6))
-        # elif letter == "/":
-        #     in_offset += 4
-        #     rtuple = a.array("B", (0, 5, 0, 6, 1, 3, 1, 4, 1, 5, 2, 1, 2, 2, 2, 3, 3, 0, 3, 1))
-        # #elif letter == "\\":
-        # #    in_offset += 4
-        # #    rtuple = a.array("B", (0, 0, 0, 1, 0, 6, 1, 1, 1, 2, 1, 3, 2, 3, 2, 4, 2, 4, 3, 5, 3, 6))
-        # elif letter == "?":
-        #     in_offset += 4
-        #     rtuple = a.array("B", (0, 0, 0, 1, 0, 3, 1, 0, 1, 2, 1, 4, 1, 6, 2, 0, 2, 1, 2, 3, 2, 4))
-        # elif letter == ".":
-        #     in_offset += 2
-        #     rtuple = a.array("B", (0, 6))
-        # elif letter == "!":
-        #     in_offset += 2
-        #     rtuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 4, 0, 6))
-        # elif letter == ":":
-        #     in_offset += 5
-        #     rtuple = a.array("B", (0, 3, 0, 5))
-        # elif letter == ",":
-        #     in_offset += 2
-        #     rtuple = a.array("B", (0, 6, 0, 7, 1, 5, 0, 6))
-        # elif letter == ";":
-        #     in_offset += 4
-        #     rtuple = a.array("B", (0, 6, 0, 7, 1, 5, 1, 6, 2, 3))
-        # elif letter == "a":
-        #     in_offset += 6
-        #     rtuple = a.array("B", (0, 4, 0, 5, 1, 3, 1, 6, 2, 3, 2, 6, 3, 4, 3, 5, 3, 6, 4, 3, 4, 4, 4, 5, 4, 6))
-        # elif letter == "b":
-        #     in_offset += 5
-        #     rtuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 1, 4, 1, 6, 2, 3, 2, 6, 3, 3, 3, 4, 3, 5, 3, 6))
-        # elif letter == "c":
-        #     in_offset += 4
-        #     rtuple = a.array("B", (0, 4, 0, 5, 1, 3, 1, 6, 2, 3, 2, 6))
-        # elif letter == "d":
-        #     in_offset += 5
-        #     rtuple = a.array("B", (0, 4, 0, 5, 1, 3, 1, 6, 2, 4, 2, 5, 3, 0, 3, 1, 3, 2, 3, 3, 3, 4, 3, 5, 3, 6))
-        # elif letter == "e":
-        #     in_offset += 5
-        #     rtuple = a.array("B", (0, 3, 0, 4, 0, 5, 1, 2, 1, 4, 1, 6, 2, 2, 2, 4, 2, 6, 3, 3, 3, 4, 3, 6))
-        # elif letter == "f":
-        #     in_offset += 5
-        #     rtuple = a.array("B", (0, 3, 1, 0, 1, 1, 1, 2, 1, 4, 1, 5, 1, 6, 2, 0, 2, 3, 3, 0))
-        # elif letter == "g":
-        #     in_offset += 4
-        #     rtuple = a.array("B", (0, 3, 0, 4, 0, 5, 0, 7, 1, 3, 1, 5, 1, 7, 2, 3, 2, 4, 2, 5, 2, 6, 2, 7))
-        # elif letter == "h":
-        #     in_offset += 4
-        #     rtuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 1, 3, 2, 3, 3, 3, 3, 4, 3, 5, 3, 6))
-        # elif letter == "i":
-        #     in_offset += 6
-        #     rtuple = a.array("B", (0, 1, 0, 3, 0, 4, 0, 5, 0, 6))
-        # elif letter == "j":
-        #     in_offset += 5
-        #     rtuple = a.array("B", (0, 7, 0, 1, 1, 3, 1, 4, 1, 5, 1, 6, 1, 7))
-        # elif letter == "k":
-        #     in_offset += 4
-        #     rtuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 1, 5, 2, 3, 2, 4, 2, 6))
-        # elif letter == "l":
-        #     in_offset += 5
-        #     rtuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 1, 6))
-        # elif letter == "m":
-        #     in_offset += 6
-        #     rtuple = a.array("B", (0, 3, 0, 4, 0, 5, 0, 6, 1, 4, 2, 4, 2, 5, 2, 6, 3, 4, 4, 4, 4, 5, 4, 6))
-        # elif letter == "n":
-        #     in_offset += 4
-        #     rtuple = a.array("B", (0, 3, 0, 4, 0, 5, 0, 6, 1, 4, 2, 4, 2, 5, 2, 6))
-        # elif letter == "o":
-        #     in_offset += 4
-        #     rtuple = a.array("B", (0, 4, 0, 5, 1, 3, 1, 6, 2, 4, 2, 5))
-        # elif letter == "p":
-        #     in_offset += 5
-        #     rtuple = a.array("B", (0, 3, 0, 4, 0, 5, 0, 6, 1, 3, 1, 5, 2, 3, 2, 5, 3, 4))
-        # elif letter == "q":
-        #     in_offset += 6
-        #     rtuple = a.array("B", (0, 4, 1, 3, 1, 5, 2, 3, 2, 5, 3, 3, 3, 4, 3, 5, 3, 6, 3, 7))
-        # elif letter == "r":
-        #     in_offset += 4
-        #     rtuple = a.array("B", (0, 3, 0, 4, 0, 5, 0, 6, 0, 7, 1, 4, 2, 3))
-        # elif letter == "s":
-        #     in_offset += 4
-        #     rtuple = a.array("B", (0, 3, 0, 4, 0, 6, 1, 3, 1, 4, 1, 5, 2, 3, 2, 5, 2, 6))
-        # elif letter == "t":
-        #     in_offset += 4
-        #     rtuple = a.array("B", (0, 2, 1, 0, 1, 1, 1, 2, 1, 3, 1, 4, 1, 5, 1, 6, 2, 2))
-        # elif letter == "u":
-        #     in_offset += 5
-        #     rtuple = a.array("B", (0, 3, 0, 4, 0, 5, 1, 6, 2, 5, 3, 3, 3, 4, 3, 5, 3, 6))
-        # elif letter == "v":
-        #     in_offset += 4
-        #     rtuple = a.array("B", (0, 3, 0, 4, 1, 5, 1, 6, 2, 3, 2, 4))
-        # elif letter == "w":
-        #     in_offset += 6
-        #     rtuple = a.array("B", (0, 3, 0, 4, 1, 5, 1, 6, 2, 4, 3, 5, 3, 6, 4, 3, 4, 4))
-        # elif letter == "x":
-        #     in_offset += 4
-        #     rtuple = a.array("B", (0, 3, 0, 4, 1, 5, 1, 6, 3, 5, 3, 6, 4, 3, 4, 4))
-        # elif letter == "y":
-        #     in_offset += 4
-        #     rtuple = a.array("B", (0, 3, 0, 4, 0, 5, 0,7, 1, 7, 2, 3, 2, 4, 2, 5, 2, 6, 2, 7))
-        # elif letter == "z":
-        #     in_offset += 5
-        #     rtuple = a.array("B", (0, 3, 0, 6, 1, 3, 1, 5, 2, 3, 2, 4, 2, 6, 3, 3, 3, 6))
+        elif letter == "/":
+            in_offset += 4
+            rtuple = a.array("B", (0, 5, 0, 6, 1, 3, 1, 4, 1, 5, 2, 1, 2, 2, 2, 3, 3, 0, 3, 1))
+        #elif letter == "\\":
+        #    in_offset += 4
+        #    rtuple = a.array("B", (0, 0, 0, 1, 0, 6, 1, 1, 1, 2, 1, 3, 2, 3, 2, 4, 2, 4, 3, 5, 3, 6))
+        elif letter == "?":
+            in_offset += 4
+            rtuple = a.array("B", (0, 0, 0, 1, 0, 3, 1, 0, 1, 2, 1, 4, 1, 6, 2, 0, 2, 1, 2, 3, 2, 4))
+        elif letter == ".":
+            in_offset += 2
+            rtuple = a.array("B", (0, 6))
+        elif letter == "!":
+            in_offset += 2
+            rtuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 4, 0, 6))
+        elif letter == ":":
+            in_offset += 5
+            rtuple = a.array("B", (0, 3, 0, 5))
+        elif letter == ",":
+            in_offset += 2
+            rtuple = a.array("B", (0, 6, 0, 7, 1, 5, 0, 6))
+        elif letter == ";":
+            in_offset += 4
+            rtuple = a.array("B", (0, 6, 0, 7, 1, 5, 1, 6, 2, 3))
+        elif letter == "a":
+            in_offset += 6
+            rtuple = a.array("B", (0, 4, 0, 5, 1, 3, 1, 6, 2, 3, 2, 6, 3, 4, 3, 5, 3, 6, 4, 3, 4, 4, 4, 5, 4, 6))
+        elif letter == "b":
+            in_offset += 5
+            rtuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 1, 4, 1, 6, 2, 3, 2, 6, 3, 3, 3, 4, 3, 5, 3, 6))
+        elif letter == "c":
+            in_offset += 4
+            rtuple = a.array("B", (0, 4, 0, 5, 1, 3, 1, 6, 2, 3, 2, 6))
+        elif letter == "d":
+            in_offset += 5
+            rtuple = a.array("B", (0, 4, 0, 5, 1, 3, 1, 6, 2, 4, 2, 5, 3, 0, 3, 1, 3, 2, 3, 3, 3, 4, 3, 5, 3, 6))
+        elif letter == "e":
+            in_offset += 5
+            rtuple = a.array("B", (0, 3, 0, 4, 0, 5, 1, 2, 1, 4, 1, 6, 2, 2, 2, 4, 2, 6, 3, 3, 3, 4, 3, 6))
+        elif letter == "f":
+            in_offset += 5
+            rtuple = a.array("B", (0, 3, 1, 0, 1, 1, 1, 2, 1, 4, 1, 5, 1, 6, 2, 0, 2, 3, 3, 0))
+        elif letter == "g":
+            in_offset += 4
+            rtuple = a.array("B", (0, 3, 0, 4, 0, 5, 0, 7, 1, 3, 1, 5, 1, 7, 2, 3, 2, 4, 2, 5, 2, 6, 2, 7))
+        elif letter == "h":
+            in_offset += 4
+            rtuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 1, 3, 2, 3, 3, 3, 3, 4, 3, 5, 3, 6))
+        elif letter == "i":
+            in_offset += 6
+            rtuple = a.array("B", (0, 1, 0, 3, 0, 4, 0, 5, 0, 6))
+        elif letter == "j":
+            in_offset += 5
+            rtuple = a.array("B", (0, 7, 0, 1, 1, 3, 1, 4, 1, 5, 1, 6, 1, 7))
+        elif letter == "k":
+            in_offset += 4
+            rtuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 1, 5, 2, 3, 2, 4, 2, 6))
+        elif letter == "l":
+            in_offset += 5
+            rtuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 1, 6))
+        elif letter == "m":
+            in_offset += 6
+            rtuple = a.array("B", (0, 3, 0, 4, 0, 5, 0, 6, 1, 4, 2, 4, 2, 5, 2, 6, 3, 4, 4, 4, 4, 5, 4, 6))
+        elif letter == "n":
+            in_offset += 4
+            rtuple = a.array("B", (0, 3, 0, 4, 0, 5, 0, 6, 1, 4, 2, 4, 2, 5, 2, 6))
+        elif letter == "o":
+            in_offset += 4
+            rtuple = a.array("B", (0, 4, 0, 5, 1, 3, 1, 6, 2, 4, 2, 5))
+        elif letter == "p":
+            in_offset += 5
+            rtuple = a.array("B", (0, 3, 0, 4, 0, 5, 0, 6, 1, 3, 1, 5, 2, 3, 2, 5, 3, 4))
+        elif letter == "q":
+            in_offset += 6
+            rtuple = a.array("B", (0, 4, 1, 3, 1, 5, 2, 3, 2, 5, 3, 3, 3, 4, 3, 5, 3, 6, 3, 7))
+        elif letter == "r":
+            in_offset += 4
+            rtuple = a.array("B", (0, 3, 0, 4, 0, 5, 0, 6, 0, 7, 1, 4, 2, 3))
+        elif letter == "s":
+            in_offset += 4
+            rtuple = a.array("B", (0, 3, 0, 4, 0, 6, 1, 3, 1, 4, 1, 5, 2, 3, 2, 5, 2, 6))
+        elif letter == "t":
+            in_offset += 4
+            rtuple = a.array("B", (0, 2, 1, 0, 1, 1, 1, 2, 1, 3, 1, 4, 1, 5, 1, 6, 2, 2))
+        elif letter == "u":
+            in_offset += 5
+            rtuple = a.array("B", (0, 3, 0, 4, 0, 5, 1, 6, 2, 5, 3, 3, 3, 4, 3, 5, 3, 6))
+        elif letter == "v":
+            in_offset += 4
+            rtuple = a.array("B", (0, 3, 0, 4, 1, 5, 1, 6, 2, 3, 2, 4))
+        elif letter == "w":
+            in_offset += 6
+            rtuple = a.array("B", (0, 3, 0, 4, 1, 5, 1, 6, 2, 4, 3, 5, 3, 6, 4, 3, 4, 4))
+        elif letter == "x":
+            in_offset += 4
+            rtuple = a.array("B", (0, 3, 0, 4, 1, 5, 1, 6, 3, 5, 3, 6, 4, 3, 4, 4))
+        elif letter == "y":
+            in_offset += 4
+            rtuple = a.array("B", (0, 3, 0, 4, 0, 5, 0,7, 1, 7, 2, 3, 2, 4, 2, 5, 2, 6, 2, 7))
+        elif letter == "z":
+            in_offset += 5
+            rtuple = a.array("B", (0, 3, 0, 6, 1, 3, 1, 5, 2, 3, 2, 4, 2, 6, 3, 3, 3, 6))
         else:
             rtuple = a.array("B", ())
         return rtuple, in_offset
