@@ -1,14 +1,9 @@
     # writing texts with neopixels 8x8 matrices
 
-from board import *
-import gc
-# import adafruit_dotstar as dotstar
-# import time
-import neopixel
 import array as a
 
 
-def colorINTENSITY(color, percentage):
+def colorintensity(color, percentage):
     """
     param color: int
     param percentage: float
@@ -65,11 +60,20 @@ def mapled(x_coord, y_coord, in_offset, orientation="Line"):
 
 WHITE = 0xffffff
 RED = 0xff0000
-
+BLACK = 0x000000
+BLUE = 0x0000FF
+GREEN = 0x00FF00
+BROWN = 0x8A2BE2
+YELLOW = 0xFFFF00
+VIOLET = 0xEE82EE
+PURPLE = 0x800080
+ORANGE = 0xFFA500
+MANGENTA = 0xFF00FF
+INDIGO = 0x4B0082
+GOLD = 0xFFD700
 
 def getpixel(letter, in_offset):
     """
-
     :type letter: Char
     :type in_offset: int (positive)
     :return: tupel of tupel, int
@@ -108,10 +112,10 @@ def getpixel(letter, in_offset):
             rtuple = a.array("B", (0, 0, 0, 1, 0, 5, 1, 0, 1, 6, 2, 0, 2, 6, 3, 0, 3, 1, 3, 2, 3, 3, 3, 4, 3, 5))
         elif letter == "K":
             in_offset += 5
-            rtuple = a.array("B", (0, 0, 0, 1, 0, 2, 0,3, 0, 4, 0, 5, 0, 6, 1, 3, 2, 2, 2, 4, 3, 0, 3, 1, 3, 5, 3, 6))
+            rtuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 1, 3, 2, 2, 2, 4, 3, 0, 3, 1, 3, 5, 3, 6))
         elif letter == "L":
             in_offset += 6
-            rtuple = a.array("B", (0, 0, 0, 1, 0, 2, 0,3, 0, 4, 0, 5, 0, 6, 1, 6, 2, 6, 3, 6))
+            rtuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 1, 6, 2, 6, 3, 6))
         elif letter == "N":
             in_offset += 5
             rtuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 1, 1, 1, 2, 2, 3, 2, 4, 3, 0, 3, 1, 3, 2, 3, 3, 3, 4, 3, 5, 3, 6))
@@ -138,7 +142,7 @@ def getpixel(letter, in_offset):
             rtuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 1, 5, 1, 6, 2, 4, 2, 5, 3, 0, 3, 1, 3, 2, 3, 3, 3, 4, 3, 5, 3, 6))
         elif letter == "V":
             in_offset += 6
-            rtuple = a.array("B", (0, 0, 1, 0, 1, 1, 1,2, 1, 3, 1, 4, 1, 5, 2, 6, 3, 0, 3, 1, 3, 2, 3, 3, 3, 4, 3, 5, 4, 0))
+            rtuple = a.array("B", (0, 0, 1, 0, 1, 1, 1, 2, 1, 3, 1, 4, 1, 5, 2, 6, 3, 0, 3, 1, 3, 2, 3, 3, 3, 4, 3, 5, 4, 0))
         elif letter == "W":
             in_offset += 6
             rtuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 4, 1, 4, 1, 5, 1, 6, 2, 0, 2, 1, 2, 3, 2, 4, 3, 0, 3, 4, 3, 5, 3, 6, 4, 0, 4, 1, 4, 2, 4, 3, 4, 4))
@@ -279,7 +283,7 @@ def getpixel(letter, in_offset):
             rtuple = a.array("B", (0, 3, 0, 4, 1, 5, 1, 6, 3, 5, 3, 6, 4, 3, 4, 4))
         elif letter == "y":
             in_offset += 4
-            rtuple = a.array("B", (0, 3, 0, 4, 0, 5, 0,7, 1, 7, 2, 3, 2, 4, 2, 5, 2, 6, 2, 7))
+            rtuple = a.array("B", (0, 3, 0, 4, 0, 5, 0, 7, 1, 7, 2, 3, 2, 4, 2, 5, 2, 6, 2, 7))
         elif letter == "z":
             in_offset += 5
             rtuple = a.array("B", (0, 3, 0, 6, 1, 3, 1, 5, 2, 3, 2, 4, 2, 6, 3, 3, 3, 6))
@@ -288,15 +292,18 @@ def getpixel(letter, in_offset):
         return rtuple, in_offset
 
 
-# starting of the main programm
-NUMPIXELS = 4*64
-neopixels = neopixel.NeoPixel(D4, NUMPIXELS, auto_write=False)
+# starting- of the main programm
 INTENSITY = 5
 
 
 def run():
+    """
+    starts a testrun for the module
+    param: void
+    return: void
+    """
     global offset
-    for letter in "TUVW":
+    for letter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890/ ?.!:; abcdefghijklmnopqrstuvwxyz":
         pixels, next_offset = getpixel(letter, offset)
         print(letter)
         print(pixels)
@@ -305,16 +312,13 @@ def run():
             x = pixels[n]
             y = pixels[n+1]
             pos = mapled(x, y, offset, "ZICZAC")
-            gc.collect()
             if pos > MAXINDEX:
                 break
             elif pos < 0:
                 continue
             else:
                 print(pos)
-                neopixels[pos] = colorINTENSITY(WHITE, INTENSITY)
         offset = next_offset
-    neopixels.show()
 
 
 if __name__ == "__main__":
