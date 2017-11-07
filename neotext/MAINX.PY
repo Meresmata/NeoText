@@ -1,13 +1,32 @@
-    # writing texts with neopixels 8x8 matrices
-
-from board import *
+"""    
+writing texts with up to 4  chained neopixel 8x8 matrices
+"""
 import gc
+from board import *
 import neopixel
 import array as a
 
+MAXINDEX = 255
+offset = 0
+ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890/ ?.!:; abcdefghijklmnopqrstuvwxyz"
+
+# starting of the main programm
+NUMPIXELS = 4*64
+neopixels = neopixel.NeoPixel(D4, NUMPIXELS, auto_write=False)
+INTENSITY = 5# in percent
+
+WHITE = 0xffffff
+RED = 0xff0000
+BLUE = 0x0000FF
+YELLOW = 0xffff00
+CYAN = 0x00ffff
+MAGENTA = 0xff00ff
+ORANGE = 0xffa500
+GREEN = 0x00FF00
 
 def colorINTENSITY(color, percentage):
     """
+    calculates the 24 bit color from a param color and param percentage (0.0 - 100.0)
     param color: int
     param percentage: float
     return: int
@@ -25,19 +44,16 @@ def colorINTENSITY(color, percentage):
 
 def square(base):
     """
+    squares param base
     param base: base to be squared
     return: int
     """
     return int(pow(base, 2))
 
-MAXINDEX = 255
-offset = 0
-ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890/ ?.!:; abcdefghijklmnopqrstuvwxyz"
-
 
 def mapled(x_coord, y_coord, in_offset, orientation="Line"):
     """
-
+    map the position of the LED positions to the led numbers
     :param x_coord: int
     :param y_coord: int
     :param in_offset: int
@@ -61,13 +77,9 @@ def mapled(x_coord, y_coord, in_offset, orientation="Line"):
     return square(TILESIZE) * matrixnumber + matrixpos
 
 
-WHITE = 0xffffff
-RED = 0xff0000
-
-
 def getpixel(letter, in_offset):
     """
-
+    get the LED position for a given sign/character
     :type letter: Char
     :type in_offset: int (positive)
     :return: tupel of tupel, int
@@ -286,34 +298,51 @@ def getpixel(letter, in_offset):
         return rtuple, in_offset
 
 
-# starting of the main programm
-NUMPIXELS = 4*64
-neopixels = neopixel.NeoPixel(D4, NUMPIXELS, auto_write=False)
-INTENSITY = 5
-
-
-def run():
+def retstart(inNum):
+    """
+    Resetting the global offset value to inNum
+    param inNum: int
+    retval: none
+    """
     global offset
-    for letter in "ABCDE":
+    offset  = inNum
+
+
+def write(text):
+    """
+    Writes the param to the Neopixel Matrix
+    param text: string
+    retval: none
+    """
+    global offset
+    for letter in text:
         pixels, next_offset = getpixel(letter, offset)
         print(letter)
         print(pixels)
+        write_raw(pixels, next_offset)
 
-        for index in range(0, len(pixels), 2):
-            x = pixels[index]
-            y = pixels[index+1]
-            pos = mapled(x, y, offset, "ZICZAC")
-            gc.collect()
-            if pos > MAXINDEX:
-                break
-            elif pos < 0:
-                continue
-            else:
-                print(pos)
-                neopixels[pos] = colorINTENSITY(WHITE, INTENSITY)
-        offset = next_offset
+
+def write_raw(raw_position_list, in_offset, orientation = "ZICZAC"):
+    """
+    param raw_position_list: array (of bytes)
+    retval: none
+    """
+    global offset
+    for index in range(0, len(raw_position_list), 2):
+        x_pos = raw_position_list[index]
+        y_pos = raw_position_list[index+1]
+        pos = mapled(x_pos, y_pos, offset, orientation)
+        gc.collect()
+        if pos > MAXINDEX:
+            break
+        elif pos < 0:
+            continue
+        else:
+            print(pos)
+            neopixels[pos] = colorINTENSITY(WHITE, INTENSITY)
+        offset = in_offset
     neopixels.show()
 
 
 if __name__ == "__main__":
-    run()
+    write("abcdef")
