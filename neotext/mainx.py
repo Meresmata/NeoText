@@ -3,8 +3,8 @@ writing texts with up to 4  chained neopixel 8x8 matrices
 """
 import gc
 import array as a
-# from board import *
-# import neopixel
+from board import *
+import neopixel
 
 
 MAXINDEX = 255
@@ -13,7 +13,7 @@ offset = 0
 
 # starting of the main programm
 NUMPIXELS = 4*64
-# neopixels = neopixel.NeoPixel(D4, NUMPIXELS, auto_write=False)
+neopixels = neopixel.NeoPixel(D4, NUMPIXELS, auto_write=False)
 # INTENSITY = 5  # in percent
 
 WHITE = 0xffffff
@@ -29,7 +29,8 @@ BLACK = 0x000000
 
 def color_intensity(color, percentage):
     """
-    calculates the 24 bit color from a param color and param percentage (0.0 - 100.0)
+    calculates the 24 bit color from a param
+    color and param percentage (0.0 - 100.0)
     param color: int
     param percentage: float
     return: int
@@ -115,79 +116,103 @@ def _get_pixel_from_ABC(letter):
     if letter == "A":
         offset = 8
         print(offset)
-        r_tuple = a.array("B", (0, 6, 1, 4, 1, 5, 1, 6, 2, 1, 2, 2, 2, 3, 3, 0, 3, 3, 4, 0, 4, 3, 5, 1, 5, 2, 5, 3, 5, 4, 5, 5, 5, 6, 6, 6))
+        r_tuple = a.array("B", (0, 6, 1, 4, 1, 5, 1, 6, 2, 1,\
+        2, 2, 2, 3, 3, 0, 3, 3, 4, 0, 4, 3, 5, 1, 5, 2, 5, 3, 5, 4, 5, 5, 5, 6, 6, 6))
     elif letter == "B":
         offset = 6
-        r_tuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 1, 0, 1, 3, 1, 6, 2, 0, 2, 3, 2, 6, 3, 0, 3, 3, 3, 6, 4, 1, 4, 2, 4, 4, 4, 5))
+        r_tuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 4,\
+        0, 5, 0, 6, 1, 0, 1, 3, 1, 6, 2, 0, 2, 3, 2, 6, 3, 0, 3, 3, 3, 6, 4, 1, 4, 2, 4, 4, 4, 5))
     elif letter == "C":
         offset = 6
-        r_tuple = a.array("B", (0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 1, 0, 1, 1, 1, 5, 1, 6, 2, 0, 2, 6, 3, 0, 3, 6, 4, 1, 4, 5))
+        r_tuple = a.array("B", (0, 1, 0, 2, 0, 3, 0, 4, 0, 5,\
+        1, 0, 1, 1, 1, 5, 1, 6, 2, 0, 2, 6, 3, 0, 3, 6, 4, 1, 4, 5))
     elif letter == "D":
         offset = 6
-        r_tuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 1, 0, 1, 6, 2, 0, 2, 6, 3, 1, 3, 5, 4, 2, 4, 3, 4, 4))
+        r_tuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 4,\
+        0, 5, 0, 6, 1, 0, 1, 6, 2, 0, 2, 6, 3, 1, 3, 5, 4, 2, 4, 3, 4, 4))
     elif letter == "E":
         offset = 5
-        r_tuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 1, 0, 1, 3, 1, 6, 2, 0, 2, 3, 2, 6, 3, 0, 3, 6))
+        r_tuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 4,\
+        0, 5, 0, 6, 1, 0, 1, 3, 1, 6, 2, 0, 2, 3, 2, 6, 3, 0, 3, 6))
     elif letter == "F":
         offset = 5
-        r_tuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 1, 0, 1, 3, 2, 0, 2, 3, 3, 0))
+        r_tuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 4,\
+        0, 5, 0, 6, 1, 0, 1, 3, 2, 0, 2, 3, 3, 0))
     elif letter == "G":
         offset = 6
-        r_tuple = a.array("B", (0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 1, 0, 1, 6, 2, 0, 2, 4, 2, 6, 3, 0, 3, 4, 3, 5, 4, 1, 4, 2, 4, 4, 4, 5, 4, 6))
+        r_tuple = a.array("B", (0, 1, 0, 2, 0, 3, 0, 4, 0, 5,\
+        1, 0, 1, 6, 2, 0, 2, 4, 2, 6, 3, 0, 3, 4, 3, 5, 4, 1, 4, 2, 4, 4, 4, 5, 4, 6))
     elif letter == "H":
         offset = 6
-        r_tuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 1, 3, 2, 3, 3, 3, 4, 0, 4, 1, 4, 2, 4, 3, 4, 4, 4, 5, 4, 6))
+        r_tuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 4,\
+        0, 5, 0, 6, 1, 3, 2, 3, 3, 3, 4, 0, 4, 1, 4, 2, 4, 3, 4, 4, 4, 5, 4, 6))
     elif letter == "I":
         offset = 2
         r_tuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6))
     elif letter == "J":
         offset = 5
-        r_tuple = a.array("B", (0, 0, 0, 1, 0, 5, 1, 0, 1, 6, 2, 0, 2, 6, 3, 0, 3, 1, 3, 2, 3, 3, 3, 4, 3, 5))
+        r_tuple = a.array("B", (0, 0, 0, 1, 0, 5, 1, 0, 1, 6,\
+        2, 0, 2, 6, 3, 0, 3, 1, 3, 2, 3, 3, 3, 4, 3, 5))
     elif letter == "K":
         offset = 5
-        r_tuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 1, 3, 2, 2, 2, 4, 3, 0, 3, 1, 3, 5, 3, 6))
+        r_tuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 4,\
+        0, 5, 0, 6, 1, 3, 2, 2, 2, 4, 3, 0, 3, 1, 3, 5, 3, 6))
     elif letter == "L":
         offset = 6
         r_tuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 1, 6, 2, 6, 3, 6))
     elif letter == "N":
         offset = 5
-        r_tuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 1, 1, 1, 2, 2, 3, 2, 4, 3, 0, 3, 1, 3, 2, 3, 3, 3, 4, 3, 5, 3, 6))
+        r_tuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 4,\
+        0, 5, 0, 6, 1, 1, 1, 2, 2, 3, 2, 4, 3, 0, 3, 1, 3, 2, 3, 3, 3, 4, 3, 5, 3, 6))
     elif letter == "O":
         offset = 6
-        r_tuple = a.array("B", (0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 1, 0, 1, 1, 1, 5, 1, 6, 2, 0, 2, 6, 3, 0, 3, 1, 3, 5, 3, 6, 4, 1, 4, 2, 4, 3, 4, 4, 4, 5))
+        r_tuple = a.array("B", (0, 1, 0, 2, 0, 3, 0, 4, 0, 5,\
+        1, 0, 1, 1, 1, 5, 1, 6, 2, 0, 2, 6, 3, 0, 3, 1, 3, 5, 3, 6, 4, 1, 4, 2, 4, 3, 4, 4, 4, 5))
     elif letter == "P":
         offset = 6
-        r_tuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 1, 0, 1, 3, 2, 0, 2, 3, 3, 0, 3, 3, 4, 1, 4, 2))
+        r_tuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 4,\
+        0, 5, 0, 6, 1, 0, 1, 3, 2, 0, 2, 3, 3, 0, 3, 3, 4, 1, 4, 2))
     elif letter == "Q":
         offset = 6
-        r_tuple = a.array("B", (0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 1, 0, 1, 1, 1, 5, 1, 6, 2, 0, 2, 4, 2, 6, 3, 0, 3, 1, 3, 5, 4, 1, 4, 2, 4, 3, 4, 4, 4, 6))
+        r_tuple = a.array("B", (0, 1, 0, 2, 0, 3, 0, 4, 0, 5,\
+        1, 0, 1, 1, 1, 5, 1, 6, 2, 0, 2, 4, 2, 6, 3, 0, 3, 1,\
+        3, 5, 4, 1, 4, 2, 4, 3, 4, 4, 4, 6))
     elif letter == "R":
         offset = 5
-        r_tuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 1, 0, 1, 3, 2, 0, 2, 3, 2, 4, 2, 6, 3, 1, 3, 2, 3, 5, 3, 6))
+        r_tuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 4,\
+        0, 5, 1, 0, 1, 3, 2, 0, 2, 3, 2, 4, 2, 6, 3, 1, 3, 2, 3, 5, 3, 6))
     elif letter == "S":
         offset = 6
-        r_tuple = a.array("B", (0, 1, 0, 2, 0, 5, 1, 0, 1, 2, 1, 6, 2, 0, 2, 3, 2, 6, 3, 0, 3, 4, 3, 6, 4, 1, 4, 4, 4, 5))
+        r_tuple = a.array("B", (0, 1, 0, 2, 0, 5, 1, 0, 1, 2,\
+        1, 6, 2, 0, 2, 3, 2, 6, 3, 0, 3, 4, 3, 6, 4, 1, 4, 4, 4, 5))
     elif letter == "T":
         offset = 6
-        r_tuple = a.array("B", (0, 0, 1, 0, 2, 0, 2, 1, 2, 2, 2, 3, 2, 4, 2, 5, 2, 6, 3, 0, 4, 0))
+        r_tuple = a.array("B", (0, 0, 1, 0, 2, 0, 2, 1, 2, 2,\
+        2, 3, 2, 4, 2, 5, 2, 6, 3, 0, 4, 0))
     elif letter == "U":
         offset = 5
-        r_tuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 1, 5, 1, 6, 2, 4, 2, 5, 3, 0, 3, 1, 3, 2, 3, 3, 3, 4, 3, 5, 3, 6))
+        r_tuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 4,\
+        0, 5, 1, 5, 1, 6, 2, 4, 2, 5, 3, 0, 3, 1, 3, 2, 3, 3, 3, 4, 3, 5, 3, 6))
     elif letter == "V":
         offset = 6
-        r_tuple = a.array("B", (0, 0, 1, 0, 1, 1, 1, 2, 1, 3, 1, 4, 1, 5, 2, 6, 3, 0, 3, 1, 3, 2, 3, 3, 3, 4, 3, 5, 4, 0))
+        r_tuple = a.array("B", (0, 0, 1, 0, 1, 1, 1, 2, 1, 3,\
+        1, 4, 1, 5, 2, 6, 3, 0, 3, 1, 3, 2, 3, 3, 3, 4, 3, 5, 4, 0))
     elif letter == "W":
         offset = 6
-        r_tuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 4, 1, 4, 1, 5, 1, 6, 2, 0, 2, 1, 2, 3, 2, 4, 3, 0, 3, 4, 3, 5, 3, 6, 4, 0, 4, 1, 4, 2, 4, 3, 4, 4))
+        r_tuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 4,\
+        1, 4, 1, 5, 1, 6, 2, 0, 2, 1, 2, 3, 2, 4, 3, 0, 3, 4,\
+        3, 5, 3, 6, 4, 0, 4, 1, 4, 2, 4, 3, 4, 4))
     elif letter == "X":
         offset = 5
-        r_tuple = a.array("B", (0, 0, 0, 6, 1, 1, 1, 2, 1, 4, 1, 5, 1, 0, 2, 3, 3, 1, 3, 2, 3, 4, 3, 5, 4, 5, 4, 6))
+        r_tuple = a.array("B", (0, 0, 0, 6, 1, 1, 1, 2, 1, 4,\
+        1, 5, 1, 0, 2, 3, 3, 1, 3, 2, 3, 4, 3, 5, 4, 5, 4, 6))
     elif letter == "Y":
         offset = 5
         r_tuple = a.array("B", (0, 0, 1, 1, 2, 2, 2, 3, 2, 4, 2, 5, 2, 6, 3, 0, 3, 1))
     elif letter == "Z":
         offset = 6
-        r_tuple = a.array("B", (0, 0, 0, 5, 0, 6, 1, 0, 1, 3, 1, 4, 2, 0, 2, 2, 2, 3, 2, 6, 3, 0, 3, 1, 3, 3, 3, 6, 4, 0, 4, 1, 4, 6))
+        r_tuple = a.array("B", (0, 0, 0, 5, 0, 6, 1, 0, 1, 3,\
+        1, 4, 2, 0, 2, 2, 2, 3, 2, 6, 3, 0, 3, 1, 3, 3, 3, 6, 4, 0, 4, 1, 4, 6))
     else:
         r_tuple = a.array("B", ())
         offset = 0
@@ -206,31 +231,39 @@ def _get_pixel_from_dec(letter):
         r_tuple = a.array("B", (0, 2, 1, 1, 2, 0, 2, 1, 3, 0, 3, 1, 3, 2, 3, 3, 3, 4, 3, 5, 3, 6))
     elif letter == "2":
         offset = 6
-        r_tuple = a.array("B", (0, 1, 0, 6, 1, 0, 1, 5, 1, 6, 2, 0, 2, 5, 2, 6, 3, 0, 3, 3, 3, 4, 3, 6, 4, 1, 4, 2, 4, 6))
+        r_tuple = a.array("B", (0, 1, 0, 6, 1, 0, 1, 5, 1, 6,\
+        2, 0, 2, 5, 2, 6, 3, 0, 3, 3, 3, 4, 3, 6, 4, 1, 4, 2, 4, 6))
     elif letter == "3":
         offset = 7
-        r_tuple = a.array("B", (0, 0, 0, 3, 0, 6, 1, 0, 1, 3, 1, 6, 2, 0, 2, 2, 2, 3, 2, 6, 3, 1, 3, 2, 3, 4, 3, 5))
+        r_tuple = a.array("B", (0, 0, 0, 3, 0, 6, 1, 0, 1, 3,\
+        1, 6, 2, 0, 2, 2, 2, 3, 2, 6, 3, 1, 3, 2, 3, 4, 3, 5))
     elif letter == "4":
         offset = 6
         r_tuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 1, 4, 2, 4, 3, 3, 3, 4, 3, 5, 3, 6))
     elif letter == "5":
         offset = 6
-        r_tuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 5, 0, 6, 1, 0, 1, 4, 1, 6, 2, 0, 2, 4, 2, 5, 2, 6, 3, 0, 3, 3, 3, 4, 3, 5, 3, 6))
+        r_tuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 5,\
+        0, 6, 1, 0, 1, 4, 1, 6, 2, 0, 2, 4, 2, 5, 2, 6, 3, 0, 3, 3, 3, 4, 3, 5, 3, 6))
     elif letter == "6":
         offset = 5
-        r_tuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 1, 0, 1, 3, 1, 6, 2, 0, 2, 3, 2, 6, 3, 0, 3, 1, 3, 4, 3, 5))
+        r_tuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 4,\
+        0, 5, 0, 6, 1, 0, 1, 3, 1, 6, 2, 0, 2, 3, 2, 6, 3, 0, 3, 1, 3, 4, 3, 5))
     elif letter == "7":
         offset = 5
-        r_tuple = a.array("B", (0, 0, 0, 3, 0, 5, 0, 6, 1, 0, 1, 3, 1, 4, 2, 0, 2, 1, 2, 2, 2, 3, 3, 0, 3, 1, 3, 3))
+        r_tuple = a.array("B", (0, 0, 0, 3, 0, 5, 0, 6, 1, 0,\
+        1, 3, 1, 4, 2, 0, 2, 1, 2, 2, 2, 3, 3, 0, 3, 1, 3, 3))
     elif letter == "8":
         offset = 5
-        r_tuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 1, 0, 1, 3, 1, 6, 2, 0, 3, 3, 2, 6, 3, 0, 3, 1, 3, 2, 3, 3, 3, 4, 3, 5, 3, 6))
+        r_tuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 4, \
+        0, 5, 0, 6, 1, 0, 1, 3, 1, 6, 2, 0, 3, 3, 2, 6, 3, 0, 3, 1, 3, 2, 3, 3, 3, 4, 3, 5, 3, 6))
     elif letter == "9":
         offset = 5
-        r_tuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 5, 0, 6, 1, 0, 1, 3, 1, 6, 2, 0, 2, 3, 2, 6, 3, 0, 3, 1, 3, 2, 3, 3, 3, 4, 3, 5, 3, 6))
+        r_tuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 5,\
+        0, 6, 1, 0, 1, 3, 1, 6, 2, 0, 2, 3, 2, 6, 3, 0, 3, 1, 3, 2, 3, 3, 3, 4, 3, 5, 3, 6))
     elif letter == "0":
         offset = 5
-        r_tuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 5, 0, 6, 1, 0, 1, 6, 2, 0, 2, 6, 3, 0, 3, 1, 3, 2, 3, 3, 3, 4, 3, 5, 3, 6))
+        r_tuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 5,\
+        0, 6, 1, 0, 1, 6, 2, 0, 2, 6, 3, 0, 3, 1, 3, 2, 3, 3, 3, 4, 3, 5, 3, 6))
     else:
         r_tuple = a.array("B", ())
         offset = 0
@@ -281,28 +314,35 @@ def _get_pixel_from_abc(letter):
     """
     if letter == "a":
         offset = 6
-        r_tuple = a.array("B", (0, 4, 0, 5, 1, 3, 1, 6, 2, 3, 2, 6, 3, 4, 3, 5, 3, 6, 4, 3, 4, 4, 4, 5, 4, 6))
+        r_tuple = a.array("B", (0, 4, 0, 5, 1, 3, 1, 6, 2, 3,\
+        2, 6, 3, 4, 3, 5, 3, 6, 4, 3, 4, 4, 4, 5, 4, 6))
     elif letter == "b":
         offset = 5
-        r_tuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 1, 4, 1, 6, 2, 3, 2, 6, 3, 3, 3, 4, 3, 5, 3, 6))
+        r_tuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 4,\
+        0, 5, 0, 6, 1, 4, 1, 6, 2, 3, 2, 6, 3, 3, 3, 4, 3, 5, 3, 6))
     elif letter == "c":
         offset = 4
         r_tuple = a.array("B", (0, 4, 0, 5, 1, 3, 1, 6, 2, 3, 2, 6))
     elif letter == "d":
         offset = 5
-        r_tuple = a.array("B", (0, 4, 0, 5, 1, 3, 1, 6, 2, 4, 2, 5, 3, 0, 3, 1, 3, 2, 3, 3, 3, 4, 3, 5, 3, 6))
+        r_tuple = a.array("B", (0, 4, 0, 5, 1, 3, 1, 6, 2, 4,\
+        2, 5, 3, 0, 3, 1, 3, 2, 3, 3, 3, 4, 3, 5, 3, 6))
     elif letter == "e":
         offset = 5
-        r_tuple = a.array("B", (0, 3, 0, 4, 0, 5, 1, 2, 1, 4, 1, 6, 2, 2, 2, 4, 2, 6, 3, 3, 3, 4, 3, 6))
+        r_tuple = a.array("B", (0, 3, 0, 4, 0, 5, 1, 2, 1, 4,\
+        1, 6, 2, 2, 2, 4, 2, 6, 3, 3, 3, 4, 3, 6))
     elif letter == "f":
         offset = 5
-        r_tuple = a.array("B", (0, 3, 1, 0, 1, 1, 1, 2, 1, 4, 1, 5, 1, 6, 2, 0, 2, 3, 3, 0))
+        r_tuple = a.array("B", (0, 3, 1, 0, 1, 1, 1, 2, 1, 4,\
+        1, 5, 1, 6, 2, 0, 2, 3, 3, 0))
     elif letter == "g":
         offset = 4
-        r_tuple = a.array("B", (0, 3, 0, 4, 0, 5, 0, 7, 1, 3, 1, 5, 1, 7, 2, 3, 2, 4, 2, 5, 2, 6, 2, 7))
+        r_tuple = a.array("B", (0, 3, 0, 4, 0, 5, 0, 7, 1, 3,\
+        1, 5, 1, 7, 2, 3, 2, 4, 2, 5, 2, 6, 2, 7))
     elif letter == "h":
         offset = 4
-        r_tuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 1, 3, 2, 3, 3, 3, 3, 4, 3, 5, 3, 6))
+        r_tuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 4,\
+        0, 5, 0, 6, 1, 3, 2, 3, 3, 3, 3, 4, 3, 5, 3, 6))
     elif letter == "i":
         offset = 6
         r_tuple = a.array("B", (0, 1, 0, 3, 0, 4, 0, 5, 0, 6))
@@ -317,7 +357,8 @@ def _get_pixel_from_abc(letter):
         r_tuple = a.array("B", (0, 0, 0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 1, 6))
     elif letter == "m":
         offset = 6
-        r_tuple = a.array("B", (0, 3, 0, 4, 0, 5, 0, 6, 1, 4, 2, 4, 2, 5, 2, 6, 3, 4, 4, 4, 4, 5, 4, 6))
+        r_tuple = a.array("B", (0, 3, 0, 4, 0, 5, 0, 6, 1, 4, 2,\
+         4, 2, 5, 2, 6, 3, 4, 4, 4, 4, 5, 4, 6))
     elif letter == "n":
         offset = 4
         r_tuple = a.array("B", (0, 3, 0, 4, 0, 5, 0, 6, 1, 4, 2, 4, 2, 5, 2, 6))
@@ -372,9 +413,9 @@ def restart(in_num=0):
     global offset
     offset = in_num
     for index in range(0, NUMPIXELS):
-        # neopixels[index] = color_intensity(BLACK, 100.0)
+        neopixels[index] = color_intensity(BLACK, 100.0)
         print(str(index) + " " + str(color_intensity(BLACK, 100.0)))
-    # neopixels.show()
+    neopixels.show()
 
 
 def write(text, orientation="ZICZAC", color=WHITE, intensity=5):
@@ -410,8 +451,8 @@ def write_raw(raw_position_list, orientation="ZICZAC", color=WHITE, intensity=5)
             continue
         else:
             print(pos)
-            # neopixels[pos] = color_intensity(color, intensity)
-    # neopixels.show()
+            neopixels[pos] = color_intensity(color, intensity)
+    neopixels.show()
 
 
 if __name__ == "__main__":
