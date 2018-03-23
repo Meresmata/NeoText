@@ -58,15 +58,11 @@ class Color:
         green = (color.to_int() & 0x00FF00) >> 8
         blue = color.to_int() & 0x0000FF
 
-        # print(hex(color))
         red = int((red * percentage) / 100)
-        # print(hex(red))
         green = int((green * percentage) / 100)
-        # print(hex(green))
         blue = int((blue * percentage) / 100)
-        # print(hex(blue))
 
-        return Color(red << 16 | green << 8 | blue)
+        return red, green, blue
 
 
 def _square(base):
@@ -85,9 +81,8 @@ class NeoWrite:
     neopixel matrices
     """
 
-    def __init__(self, num_tiles, pin, back_color=Color(COLORS.BLACK), intensity=5, orientation="ZICZAC"):
+    def __init__(self, num_tiles, pin, back_color=Color(COLORS.BLACK), intensity=5, orientation="ZIGZAG"):
         """
-        init
         :type num_tiles: int number of neopixel matrices
         :type pin: pin
         :type back_color: Color
@@ -97,7 +92,7 @@ class NeoWrite:
         assert num_tiles > 0
         assert intensity >= 0
         assert intensity <= 100
-        assert orientation.upper() == "ZICZAC" or orientation.upper() == "LINE"
+        assert orientation.upper() == "ZIGZAG" or orientation.upper() == "LINE"
         assert back_color.to_int() <= 0xFFFFFF
         assert back_color.to_int() >= 0
 
@@ -105,7 +100,8 @@ class NeoWrite:
         self.num_pixels = num_tiles * 64
         self.orientation = orientation.upper()
         self.neopixels = neopixel.NeoPixel(pin, self.num_pixels, auto_write=False)
-        self.pixel_xy_positions = a.array("B", ())  # relay on sorting of pixels (upper left to lower right)
+        self.pixel_x_y_color = a.array("B", ())  # relay on sorting of pixels (upper left to lower right)
+        self.element_byte_size = 5
         if back_color != Color(COLORS.BLACK):
             self.clear(0, back_color, intensity)
         self.time_stamp = time.monotonic()
@@ -118,25 +114,21 @@ class NeoWrite:
         :type y_coord: int y-coordinate of LED
         :return: int number of chained LED
         """
-        assert y_coord >= 0
-        assert y_coord < 8, str(y_coord) + " is to high."
-        assert x_coord >= 0
-        assert x_coord < self.num_pixels // 8
+        # assert y_coord >= 0
+        # assert y_coord < 8, str(y_coord) + " is to high."
+        # assert x_coord >= 0
+        # assert x_coord < self.num_pixels // 8
 
         tile_size = 8
-        max_index = tile_size - 1
+        max_index = 7
 
-        local_x = x_coord  # + self.offset
+        matrix_number = x_coord // tile_size
 
-        matrix_number = local_x // tile_size
-        # print(matrix_number)
-
-        if (self.orientation == "ZICZAC") and (matrix_number % 2):
-            matrix_pos = local_x % tile_size + tile_size * y_coord
-            # print(matrix_pos)
+        if (self.orientation == "ZIGZAG") and (matrix_number % 2):
+            matrix_pos = x_coord % tile_size + tile_size * y_coord
         else:
-            matrix_pos = (max_index - y_coord) + tile_size * (local_x % tile_size)
-            # print(matrix_pos)
+            matrix_pos = (max_index - y_coord) + tile_size * (x_coord % tile_size)
+
         return _square(tile_size) * matrix_number + matrix_pos
 
     def reset(self, in_num=0, back_color=Color(COLORS.BLACK), foreground_color=Color(COLORS.WHITE), intensity=5):
@@ -163,16 +155,15 @@ class NeoWrite:
         foreground_index = 0
         for index in range(0, self.num_pixels):
             # find out whether LED is in foreground or not
-            next_foreground_led_num = self._map_led(self.pixel_xy_positions[foreground_index],
-                                                    self.pixel_xy_positions[foreground_index+1])
+            next_foreground_led_num = self._map_led(self.pixel_x_y_color[foreground_index],
+                                                    self.pixel_x_y_color[foreground_index + 1])
             if index < next_foreground_led_num:
                 self.neopixels[index] = Color.intensity(back_color, intensity)
             elif index == next_foreground_led_num:
                 self.neopixels[index] = Color.intensity(self.neopixels[foreground_index], intensity)
-                foreground_index = foreground_index+2
+                foreground_index = foreground_index + self.element_byte_size
             # index should logically not be able to be be larger than compare value
 
-            # print(str(index) + " " + str(hex(_color_intensity(back_color, intensity))))
         self.neopixels.show()
 
     def clear(self, in_num=0, back_color=Color(COLORS.BLACK), intensity=0):
@@ -194,11 +185,9 @@ class NeoWrite:
         self.offset = in_num
 
         for index in range(self.offset, self.num_pixels):
-            self.neopixels[index] = Color.intensity(back_color, intensity).to_int()
+            self.neopixels[index] = Color.intensity(back_color, intensity)
 
-            # print(str(index) + " " + str(hex(_color_intensity(back_color, intensity))))
-
-        self.pixel_xy_positions = a.array("B", ())
+        self.pixel_x_y_color = a.array("B", ())
         self.max_x = self.offset
         self.neopixels.show()
 
@@ -217,16 +206,13 @@ class NeoWrite:
 
         for letter in text:
             pixels, next_offset = _get_pixel(letter, self.offset)
-            # print(letter)
-            # print(pixels)
-            # print(color)
-            self.write_raw(pixels, color, intensity)
-            self.offset = next_offset
+            self.write_raw(pixels, next_offset, color, intensity)
 
-    def write_raw(self, raw_position_list, color=Color(COLORS.WHITE), intensity=5):
+    def write_raw(self, raw_position_list, next_offset, color=Color(COLORS.WHITE), intensity=5):
         """
         Safe the raw (x,y)-Position in array of pixel positions
         :type raw_position_list: array (of Byte)
+        :type next_offset: int, offset for placement of next letter
         :type color: int color code
         :type intensity: int max. intensity of each LED
         :return: None
@@ -243,49 +229,62 @@ class NeoWrite:
             x_pos = raw_position_list[index]
             # if x_pos > self.max_x:
             #    self.max_x = x_pos
-            if self.offset + x_pos + 1 > self.max_x:
-                self.max_x = x_pos + self.offset + 1
+            if self.offset + x_pos + 2 > self.max_x:
+                self.max_x = x_pos + self.offset + 2
             y_pos = raw_position_list[index + 1]
 
             # safe for redrawing
-            self.pixel_xy_positions.append(x_pos + self.offset)
+            self.pixel_x_y_color.append(x_pos + self.offset)
             local_array.append(x_pos + self.offset)
-            self.pixel_xy_positions.append(y_pos)
+            self.pixel_x_y_color.append(y_pos)
             local_array.append(y_pos)
+
+            # set color
+            red, green, blue = Color.intensity(color, intensity)
+            self.pixel_x_y_color.append(red)
+            local_array.append(red)
+
+            self.pixel_x_y_color.append(green)
+            local_array.append(green)
+
+            self.pixel_x_y_color.append(blue)
+            local_array.append(blue)
+
         # "put" the result onto the LED MATRIX
         # self.put_pixels(self.pixel_xy_positions, color, intensity)
-        self.put_pixels(local_array, color, intensity)
+        self.__put_pixels(local_array)
+        self.offset = next_offset
 
-    def put_pixels(self, in_array, color=Color(COLORS.WHITE), intensity=5):
+    def __put_pixels(self, in_array):
         """
         Write pixels into display takes relative positions of the displays into account
         :param in_array: array of bytes
-        :param color: int color code
-        :param intensity: int percentage of max intensity of each LED
         :return: None
         """
-        assert intensity >= 0
-        assert intensity <= 100
-        assert color.to_int() <= 0xFFFFFF
-        assert color.to_int() >= 0
-
-        for index in range(0, len(in_array), 2):
+        for index in range(0, len(in_array), self.element_byte_size):
             # set each pixel, that fits into the display
             if in_array[index] < self.num_pixels//8:
-                self.__put_pixel(in_array[index], in_array[index + 1], Color.intensity(color, intensity))
+                self.__put_pixel(in_array[index], in_array[index + 1], in_array[index + 2], in_array[index + 3],
+                                 in_array[index + 4])
 
         self.neopixels.show()
 
-    def __put_pixel(self, x_pos, y_pos, color=Color(COLORS.WHITE)):
+    def __put_pixel(self, x_pos, y_pos, red, green, blue):
         """
         turn the LED of specified LED on, with the specified color
         :param x_pos: int from 0 to number of columns -1
         :param y_pos: int from 0 to number of rows -1
-        :param color: int color code
+        :param red: int (byte)
+        :param green: int (byte)
+        :param blue: int (byte)
         :return: None
         """
-        assert color.to_int() <= 0xFFFFFF
-        assert color.to_int() >= 0
+        assert red <= 0xFF
+        assert red >= 0
+        assert green <= 0xFF
+        assert green >= 0
+        assert blue <= 0xFF
+        assert blue >= 0
         assert x_pos < self.num_pixels//8  # number of total columns
         assert x_pos >= 0
         assert y_pos <= 8
@@ -298,72 +297,51 @@ class NeoWrite:
         elif pos < 0:
             pass
         else:
-            # print(pos)
-            # print(color)
-            # self.pixel_xy_positions.append(pos) #seams to be an error
-            self.neopixels[pos] = color.to_int()
+            self.neopixels[pos] = (red, green, blue)
 
-    def run_text(self, direction="LEFT", time_step=2):
+    def scroll(self, direction="LEFT", time_step=2.0):
         """
         Let the text run in top the left/right direction
         :param direction: str LEFT or RIGHT
-        :param time_step: float time in ?(not specified in neopixel document, about a second?)
+        :param time_step: float time in ?(not specified in neopixel document, about a second?), current max 2 Hz
         :return: None
         """
         assert direction.upper() == "LEFT" or direction.upper() == "RIGHT"
         assert time_step > 0.0
 
         step = - 1 if direction.upper() == "LEFT" else +1
-        local_x_y_color_array = a.array("B", ())
 
-        furthest_right_pos = self.max_x if self.max_x > self.num_pixels//8 else self.num_pixels//8
+        furthest_right_pos = max(self.max_x, self.num_pixels//8)
 
         # calculate new positions, safe them locally, including their corresponding color
         if time.monotonic() >= self.time_stamp + time_step:
-            # print(str(self.time_stamp) + "/" + str(time_step) + "/" + str(time.monotonic()))
+            # clear unused pixel
+            for index in range(self.num_pixels):
+                self.neopixels[index] = 0
 
             # for every position in use: x, y, red, green, blue
-
-            for index in range(0, len(self.pixel_xy_positions), 2):
-                x_pos = self.pixel_xy_positions[index]
-                y_pos = self.pixel_xy_positions[index + 1]
-                old_color = Color(self.neopixels[self._map_led(x_pos, y_pos)]).to_tuple()
-
+            for index in range(0, len(self.pixel_x_y_color), self.element_byte_size):
+                x_pos = self.pixel_x_y_color[index]
                 new_x_pos = (x_pos + step) % furthest_right_pos
-                # print(furthest_right_pos)
-                local_x_y_color_array.append(new_x_pos)
-                # print(y_pos)
-                local_x_y_color_array.append(y_pos)
-                local_x_y_color_array.append(old_color[0])
-                local_x_y_color_array.append(old_color[1])
-                local_x_y_color_array.append(old_color[2])
+                self.pixel_x_y_color[index] = new_x_pos
 
-                # self.__put_pixel(new_x_pos, y_pos, Color(old_color))
-
-            self.clear()
-            # write new positions into class and on screen (later with correct color)
-            self.pixel_xy_positions = a.array("B", ())
-            for index in range(0, len(local_x_y_color_array), 5):
-                # self.pixel_xy_positions = local_array
-                x_pos = local_x_y_color_array[index]
-                if x_pos > self.num_pixels//8:  # don't write on columns further right, than the most right one
+                if new_x_pos >= self.num_pixels // 8:
                     continue
-                y_pos = local_x_y_color_array[index + 1]
-                color = Color((local_x_y_color_array[index + 2], local_x_y_color_array[index + 3],
-                               local_x_y_color_array[index + 4]))
-                self.__put_pixel(x_pos, y_pos, color)
+                else:
+                    # put used pixel
+                    red = index + 2
+                    green = index + 3
+                    blue = index + 4
 
-                # safe to class
-                self.pixel_xy_positions.append(x_pos)
-                self.pixel_xy_positions.append(y_pos)
+                    pos = self._map_led(new_x_pos, self.pixel_x_y_color[index + 1])
+                    self.neopixels[pos] = (self.pixel_x_y_color[red], self.pixel_x_y_color[green],
+                                           self.pixel_x_y_color[blue])
+
             self.neopixels.show()
 
     def deinit(self):
         self.neopixels.deinit()
         gc.collect()
-
-    def _print_pix_pos(self):
-        print(self.pixel_xy_positions)
 
 
 def _get_pixel(character, in_offset):
@@ -377,9 +355,9 @@ def _get_pixel(character, in_offset):
     assert ord(character) < 128  # if is ascii
 
     if character.isalpha() and character.isupper():
-        r_tuple, r_offset = _get_pixel_from_ABC(character)
+        r_tuple, r_offset = _get_pixel_from_capitals(character)
     elif character.isalpha() and character.islower():
-        r_tuple, r_offset = _get_pixel_from_abc(character)
+        r_tuple, r_offset = _get_pixel_from_minuscules(character)
     elif character.isdigit():
         r_tuple, r_offset = _get_pixel_from_dec(character)
     elif character in "/ ?.!:;, ":
@@ -390,7 +368,7 @@ def _get_pixel(character, in_offset):
     return r_tuple, in_offset + r_offset
 
 
-def _get_pixel_from_ABC(letter):
+def _get_pixel_from_capitals(letter):
     """
     get the LED position for a given sign/character
     :type letter: string
@@ -398,7 +376,6 @@ def _get_pixel_from_ABC(letter):
     """
     if letter == "A":
         offset = 8
-        # print(offset)
         r_tuple = a.array("B", (0, 6, 1, 4, 1, 5, 1, 6, 2, 1,
                                 2, 2, 2, 3, 3, 0, 3, 3, 4, 0,
                                 4, 3, 5, 1, 5, 2, 5, 3, 5, 4, 5, 5, 5, 6, 6, 6))
@@ -637,7 +614,7 @@ def _get_pixel_from_special(character):
     return r_tuple, offset
 
 
-def _get_pixel_from_abc(letter):
+def _get_pixel_from_minuscules(letter):
     """
         get the LED position for a given sign/character
         :type letter: string of one small cap. letter
@@ -740,22 +717,27 @@ def _get_pixel_from_abc(letter):
 
 
 def run_test():
-    NEO = NeoWrite(4, b.D4)
-    NEO.write("ABC")
-    NEO.write("DE", color=Color(COLORS.BLUE))
+    neo = NeoWrite(4, b.D4)
+    neo.write("ABC")
+    neo.write("DEF", color=Color(COLORS.BLUE))
 
-    NEO.run_text()
+    heart = a.array("B", (0, 3, 0, 4, 1, 2, 1, 3, 1, 4, 1, 5,
+                          2, 3, 2, 4, 2, 5, 2, 6, 3, 4, 3, 5,
+                          3, 6, 3, 7, 4, 3, 4, 4, 4, 5, 4, 6,
+                          5, 2, 5, 3, 5, 4, 5, 5, 6, 3, 6, 4))
+    neo.write_raw(heart, 8, Color(COLORS.RED))
+    neo.scroll()
 
-    hundred_times = 100
+    large_number = 1 << 8
     time_interval = 0.1
-    while hundred_times:
-        if NEO.time_stamp + time_interval < time.monotonic():
-            NEO.run_text(time_step = time_interval)
-            hundred_times = hundred_times - 1
+    while large_number:
+        neo.scroll(time_step=time_interval)
+        large_number = large_number - 1
 
-    NEO.clear()
-    NEO.deinit()
+    neo.clear()
+    neo.deinit()
     print("Test passed!")
+
 
 if __name__ == "__main__":
 
